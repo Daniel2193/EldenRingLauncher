@@ -209,6 +209,7 @@ dependencies = [
  "imgui-sdl2-support",
  "native-dialog",
  "sdl2",
+ "winapi",
 ]
 
 [[package]]
