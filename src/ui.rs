@@ -8,7 +8,8 @@ use std::{
 use winapi::um::winuser::FindWindowA;
 
 use crate::{
-    BASEGAME_EXE, DLL_DISABLED, DLL_ENABLED, EAC_EXE, MODENGINE2_DIR, MODENGINE2_EXE, SEAMLESS_EXE, SEAMLESS_URL
+    BASEGAME_EXE, DLL_DISABLED, DLL_ENABLED, EAC_EXE, MODENGINE2_DIR, MODENGINE2_EXE, SEAMLESS_EXE,
+    SEAMLESS_URL,
 };
 
 pub fn draw_ui(ui: &mut imgui::Ui, opened: &mut bool) {
@@ -23,7 +24,7 @@ pub fn draw_ui(ui: &mut imgui::Ui, opened: &mut bool) {
             let path_dll = Path::new(DLL_ENABLED);
             let path_dll_disabled = Path::new(DLL_DISABLED);
             if ui.button_with_size("Start ModEngine2/EldenModLoader", [(crate::WINDOW_WIDTH as f32) - 30.0, ((crate::WINDOW_HEIGHT as f32) / 4.0) - 30.0]) {
-                let path_me2l = Path::new(".").join(MODENGINE2_DIR).join(MODENGINE2_EXE);
+                let path_me2l = Path::new(MODENGINE2_DIR).join(MODENGINE2_EXE);
                 if !path_dll.exists() && !path_dll_disabled.exists() {
                     _ = native_dialog::MessageDialog::new()
                         .set_type(native_dialog::MessageType::Warning)
@@ -43,7 +44,7 @@ pub fn draw_ui(ui: &mut imgui::Ui, opened: &mut bool) {
                         .show_alert();
                     return;
                 }
-                if let Err(e) = Command::new(path_me2l).current_dir(MODENGINE2_DIR).args(["-p",format!("..{}{}", MAIN_SEPARATOR, BASEGAME_EXE).as_str(),"-t", "er", "-c", ".\\config_eldenring.toml"]).spawn() {
+                if let Err(e) = Command::new(path_me2l).current_dir(MODENGINE2_DIR).args(["-p", format!("..{}{}", MAIN_SEPARATOR, BASEGAME_EXE).as_str(),"-t", "er", "-c", ".\\config_eldenring.toml"]).spawn() {
                     _ = native_dialog::MessageDialog::new()
                         .set_type(native_dialog::MessageType::Error)
                         .set_title("Error!")
@@ -66,11 +67,11 @@ pub fn draw_ui(ui: &mut imgui::Ui, opened: &mut bool) {
             ui.separator();
 
             if ui.button_with_size("Start Seamless Coop", [(crate::WINDOW_WIDTH as f32) - 30.0, ((crate::WINDOW_HEIGHT as f32) / 4.0) - 30.0]) {
-                let path = Path::new(".").join(SEAMLESS_EXE);
+                let path_coop = Path::new(SEAMLESS_EXE);
                 if path_dll.exists(){
                     _ = rename(path_dll, path_dll_disabled);
                 }
-                if !path.exists() {
+                if !path_coop.exists() {
                     _ = native_dialog::MessageDialog::new()
                         .set_type(native_dialog::MessageType::Error)
                         .set_title("Error!")
@@ -78,7 +79,7 @@ pub fn draw_ui(ui: &mut imgui::Ui, opened: &mut bool) {
                         .show_alert();
                     return;
                 }
-                if let Err(e) = std::process::Command::new(path).arg("-eac-nop-loaded").spawn() {
+                if let Err(e) = std::process::Command::new(path_coop).arg("-eac-nop-loaded").spawn() {
                     _ = native_dialog::MessageDialog::new()
                         .set_type(native_dialog::MessageType::Error)
                         .set_title("Error!")
@@ -100,7 +101,7 @@ pub fn draw_ui(ui: &mut imgui::Ui, opened: &mut bool) {
                             _ = native_dialog::MessageDialog::new()
                                 .set_type(native_dialog::MessageType::Error)
                                 .set_title("Error!")
-                                .set_text("Could not rename dinput8.dll to dinput8\n\nRefusing to launch the game")
+                                .set_text(format!("Could not rename {} to {}\n\nRefusing to launch the game", DLL_ENABLED, DLL_DISABLED).as_str())
                                 .show_alert();
                             return;
                         }
@@ -154,7 +155,7 @@ pub fn draw_ui(ui: &mut imgui::Ui, opened: &mut bool) {
 }
 
 fn check_if_game_launched() -> bool {
-    let file = CString::new("eldenring.exe").expect("CString::new failed");
+    let file = CString::new(BASEGAME_EXE).expect("CString::new failed");
     let window_handle = unsafe { FindWindowA(std::ptr::null_mut(), file.as_ptr()) };
     window_handle != std::ptr::null_mut()
 }
