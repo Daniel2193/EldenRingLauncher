@@ -79,7 +79,7 @@ pub fn draw_ui(ui: &mut imgui::Ui, opened: &mut bool) {
                         .show_alert();
                     return;
                 }
-                if let Err(e) = std::process::Command::new(path_coop).arg("-eac-nop-loaded").spawn() {
+                if let Err(e) = std::process::Command::new(path_coop).current_dir(".").spawn() {
                     _ = native_dialog::MessageDialog::new()
                         .set_type(native_dialog::MessageType::Error)
                         .set_title("Error!")
