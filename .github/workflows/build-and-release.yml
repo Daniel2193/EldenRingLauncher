@@ -1,0 +1,49 @@
+name: "Build and Release"
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "latest"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build action script
+        run: pnpm build
+      
+      - name: Setup cargo cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        
+
+      - name: Build Rust Application
+        run: cargo build --release
+
+      - name: Run local action
+        uses: ./.github/actions/build-and-release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          file_path: "target/release/start_protected_game.exe"

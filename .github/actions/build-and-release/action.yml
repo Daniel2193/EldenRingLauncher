@@ -1,0 +1,19 @@
+name: "Rust Build and Release"
+description: "Builds a rust exe and creates a new release tag based on the version in Cargo.toml and adds the exe to that tag"
+author: "Daniel2193"
+
+inputs:
+  token:
+    required: true
+    description: "Should be set to ${{ secrets.GITHUB_TOKEN }}"
+  toml_path:
+    required: false
+    description: "Path to your Cargo.toml, Defaults to ./Cargo.toml"
+    default: "./Cargo.toml"
+  file_path:
+    required: true
+    description: "Path to the File you want to upload to the release"
+
+runs:
+  using: "node20"
+  main: "index.js"
