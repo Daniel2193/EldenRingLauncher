@@ -5,7 +5,7 @@ author: "Daniel2193"
 inputs:
   token:
     required: true
-    description: "Should be set to ${{ secrets.GITHUB_TOKEN }}"
+    description: ""
   toml_path:
     required: false
     description: "Path to your Cargo.toml, Defaults to ./Cargo.toml"
