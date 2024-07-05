@@ -1,7 +1,8 @@
 [package]
 name = "elden_ring_launcher"
-version = "3.2.0"
+version = "3.2.1"
 edition = "2021"
+repository = "https://github.com/Daniel2193/EldenRingLauncher"
 
 [[bin]]
 name = "start_protected_game"
