@@ -42,8 +42,14 @@ jobs:
       - name: Build Rust Application
         run: cargo build --release
 
-      - name: Run local action
-        uses: ./.github/actions/build-and-release
+      #- name: Run local action
+      #  uses: ./.github/actions/build-and-release
+      #  with:
+      #    token: ${{ secrets.GITHUB_TOKEN }}
+      #    file_path: "target/release/start_protected_game.exe"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          file_path: "target/release/start_protected_game.exe"
+          name: start_protected_game
+          path: target/release/start_protected_game.exe
+
